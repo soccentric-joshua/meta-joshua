@@ -1,7 +1,7 @@
 software =
     {
         version = "@@VERSION@@";
-        hardware- compatibility =["1.0"];
+        hardware-compatibility =["1.0"];
 
 /*
  * Raspberry Pi 5 — A/B rootfs OTA update

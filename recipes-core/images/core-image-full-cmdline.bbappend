@@ -83,7 +83,6 @@ IMAGE_INSTALL:append = " \
 # System / hardware inspection
 IMAGE_INSTALL:append = " \
     lshw \
-    usbutils \
     ethtool \
     devmem2 \
     cpupower \
