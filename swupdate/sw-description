@@ -1,22 +1,22 @@
 software =
-    {
-        version = "@@VERSION@@";
-        hardware-compatibility =["1.0"];
+{
+    version = "@@VERSION@@";
+    hardware-compatibility =["1.0"];
 
 /*
- * Raspberry Pi 5 — A/B rootfs OTA update
+ * Raspberry Pi 5 — A/B rootfs OTA update (C1/I3: includes kernel + DTB)
  *
  * Workflow:
- *   1. pre-install.sh  identifies the inactive slot (p2 or p3) and
- *      creates the /dev/swupdate-inactive symlink.
- *   2. The "raw" handler streams rootfs.ext4.gz onto that device.
- *   3. post-install.sh updates /boot/cmdline.txt so the new slot
- *      is selected on the next reboot, then cleans up temp files.
- *   4. SWUpdate triggers `reboot` via postupdatecmd in swupdate.cfg.
- *
- * To deliver the update:
- *   • Web UI  : http://<device-ip>:8080  (drag-and-drop .swu)
- *   • CLI push: swupdate-client -v <device-ip> rpi5-<version>.swu
+ *   1. pre-install.sh  identifies the inactive slot, creates
+ *      /dev/swupdate-inactive symlink, and backs up current
+ *      kernel_2712.img and DTB to *.prev for rollback.
+ *   2. The "raw" handler streams rootfs.ext4.gz → inactive slot.
+ *   3. kernel_2712.img and bcm2712-rpi-5-b.dtb are written to /boot/.
+ *   4. post-install.sh updates /boot/cmdline.txt, writes /boot/boot_state
+ *      (tries_remaining=3, confirmed=false), and backs up cmdline.txt.prev.
+ *   5. SWUpdate triggers `reboot` via postupdatecmd.
+ *   On next boot: boot-watchdog.sh decrements tries_remaining.
+ *   After apps are healthy: swupdate-bootcheck.sh writes confirmed=true.
  */
 
 images: (
@@ -25,6 +25,16 @@ images: (
         type       = "raw";
         device     = "/dev/swupdate-inactive";
         compressed = "zlib";
+    },
+    {
+        filename = "kernel_2712.img";
+        type     = "rawfile";
+        path     = "/boot/kernel_2712.img";
+    },
+    {
+        filename = "bcm2712-rpi-5-b.dtb";
+        type     = "rawfile";
+        path     = "/boot/bcm2712-rpi-5-b.dtb";
     }
 );
 

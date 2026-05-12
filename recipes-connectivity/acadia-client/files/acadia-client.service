@@ -1,0 +1,24 @@
+[Unit]
+Description=Acadia Client — gRPC daemon for IV&V hardware validation
+After=network-online.target var-lib-acadia.mount
+Wants=network-online.target var-lib-acadia.mount
+
+[Service]
+Type=simple
+User=acadia
+Group=acadia
+WorkingDirectory=/var/lib/acadia
+ExecStart=/usr/bin/acadia-client
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=5
+StandardOutput=journal
+StandardError=journal
+NoNewPrivileges=yes
+ProtectSystem=full
+PrivateTmp=yes
+ReadWritePaths=/var/lib/acadia
+
+[Install]
+WantedBy=multi-user.target

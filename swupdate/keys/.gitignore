@@ -1,0 +1,2 @@
+# Do NOT commit the private key to version control.
+swupdate-private.pem

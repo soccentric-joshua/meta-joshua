@@ -21,10 +21,9 @@ IMAGE_INSTALL:append = " \
     bluez5-dev \
 "
 
-# gRPC + Protocol Buffers (C++ runtime, compiler plugin, and Python bindings)
+# gRPC + Protocol Buffers (C++ runtime + Python bindings; NO compiler on device — M5)
 IMAGE_INSTALL:append = " \
     protobuf \
-    protobuf-compiler \
     protobuf-lite \
     grpc \
     python3-grpcio \
@@ -93,15 +92,19 @@ IMAGE_INSTALL:append = " \
     v4l-utils \
     evtest \
     python3-periphery \
+    vim \
 "
 
-# Acadia HAL
-IMAGE_INSTALL:append = " acadia-hal"
+# Acadia HAL + system services
+# NOTE: acadia-client excluded until upstream repo is available
+IMAGE_INSTALL:append = " acadia-hal acadia-services"
 
-# Add local user 'rpi' with password 'rpi' and sudo access
+# 'rpi' operator account — LOCKED (no password). SSH key access only.
+# The committed password hash has been removed (C4).
+# Add an SSH public key to /home/rpi/.ssh/authorized_keys after flashing.
 inherit extrausers
 
 EXTRA_USERS_PARAMS = "\
     useradd -m -s /bin/bash -G sudo rpi; \
-    usermod -p '\$6\$8.kfghMSYkTHsFqs\$fKQIEp.xMjitUYt9yXjEZBUvKqUOQvxekn5.9hWP9ewiLFSI0LQi5OpaDNfSqh4OU.tzN7co7olMAYg53/kCP0' rpi; \
+    usermod -L rpi; \
 "

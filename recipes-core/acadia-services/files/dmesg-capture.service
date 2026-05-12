@@ -1,0 +1,12 @@
+[Unit]
+Description=Capture kernel ring buffer to /var/log/dmesg.boot
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c 'dmesg --color=never > /var/log/dmesg.boot'
+
+[Install]
+WantedBy=multi-user.target

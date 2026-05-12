@@ -1,0 +1,15 @@
+[Unit]
+Description=Initialise Acadia persistent data directory (/home/acadia)
+DefaultDependencies=no
+After=local-fs.target
+Before=var-lib-acadia.mount acadia-client.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/mkdir -p /home/acadia
+ExecStart=/bin/chown acadia:acadia /home/acadia
+ExecStart=/bin/chmod 0750 /home/acadia
+
+[Install]
+WantedBy=multi-user.target

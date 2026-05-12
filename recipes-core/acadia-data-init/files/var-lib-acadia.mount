@@ -1,0 +1,14 @@
+[Unit]
+Description=Bind-mount /home/acadia to /var/lib/acadia for Acadia-Client
+DefaultDependencies=no
+After=local-fs.target acadia-data-init.service
+Before=acadia-client.service
+
+[Mount]
+What=/home/acadia
+Where=/var/lib/acadia
+Type=none
+Options=bind
+
+[Install]
+WantedBy=multi-user.target
