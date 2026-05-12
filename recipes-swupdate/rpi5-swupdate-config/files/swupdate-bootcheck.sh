@@ -1,19 +1,48 @@
 #!/bin/bash
-# swupdate-bootcheck — runs once per boot, logs the active slot.
+# swupdate-bootcheck.sh — I4/C1: health check that confirms OTA or triggers rollback.
 #
-# In a full rollback implementation an initramfs-based boot counter
-# (stored in /boot/tries_remaining) would decrement on each boot attempt
-# and restore the old cmdline.txt when it reaches zero.  This script
-# represents the "boot confirmed" step that would reset that counter.
+# Runs after network and acadia-client.service are up.
+# If acadia-client is healthy → write confirmed=true to /boot/boot_state.
+# If not healthy              → restore previous slot from .prev backups and reboot.
 
 set -euo pipefail
 
-ACTIVE_DEV=$(findmnt -n -o SOURCE / 2>/dev/null || echo "unknown")
-case "${ACTIVE_DEV}" in
-    /dev/mmcblk0p2) SLOT=a ;;
-    /dev/mmcblk0p3) SLOT=b ;;
-    *)              SLOT=unknown ;;
-esac
+BOOT_STATE=/boot/boot_state
 
-logger -t swupdate-bootcheck "Boot confirmed: slot=${SLOT} dev=${ACTIVE_DEV}"
-echo "slot=${SLOT}" > /run/swupdate-active-slot
+# If there is no boot_state the system was not recently updated — nothing to do.
+if [[ ! -f "${BOOT_STATE}" ]]; then
+    exit 0
+fi
+
+source "${BOOT_STATE}"    # imports slot, tries_remaining, confirmed
+
+# Already confirmed by a previous run
+if [[ "${confirmed:-false}" == "true" ]]; then
+    exit 0
+fi
+
+# ── Health check ─────────────────────────────────────────────────────────────
+HEALTH_OK=true
+if ! systemctl is-active --quiet acadia-client.service; then
+    HEALTH_OK=false
+fi
+
+if [[ "${HEALTH_OK}" == "true" ]]; then
+    mount -o remount,rw /boot
+    sed -i 's/confirmed=false/confirmed=true/' "${BOOT_STATE}"
+    mount -o remount,ro /boot
+    logger -t swupdate-bootcheck "Slot ${slot} confirmed healthy"
+else
+    logger -t swupdate-bootcheck "Slot ${slot} unhealthy — rolling back"
+    mount -o remount,rw /boot
+    if [[ -f /boot/cmdline.txt.prev ]]; then
+        cp /boot/cmdline.txt.prev /boot/cmdline.txt
+    fi
+    for f in kernel_2712.img bcm2712-rpi-5-b.dtb; do
+        [[ -f "/boot/${f}.prev" ]] && cp "/boot/${f}.prev" "/boot/${f}" || true
+    done
+    rm -f "${BOOT_STATE}" /boot/cmdline.txt.prev \
+          /boot/kernel_2712.img.prev /boot/bcm2712-rpi-5-b.dtb.prev
+    mount -o remount,ro /boot
+    reboot
+fi

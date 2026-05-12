@@ -1,13 +1,14 @@
 [Unit]
-Description=SWUpdate boot verification (active slot confirmation)
+Description=SWUpdate boot health check — confirm OTA slot or trigger rollback
 Documentation=https://sbabic.github.io/swupdate/
-After=local-fs.target
-DefaultDependencies=no
+After=network-online.target acadia-client.service
+Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/lib/swupdate/swupdate-bootcheck.sh
 RemainAfterExit=yes
+ExecStart=/usr/lib/swupdate/swupdate-bootcheck.sh
+TimeoutStartSec=120
 
 [Install]
-WantedBy=sysinit.target
+WantedBy=multi-user.target

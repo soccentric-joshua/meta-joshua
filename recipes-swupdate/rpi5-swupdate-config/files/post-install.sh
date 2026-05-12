@@ -1,9 +1,9 @@
 #!/bin/bash
-# SWUpdate post-install script ─ included in every .swu package
+# SWUpdate post-install script — included in every .swu package
 #
 # Updates /boot/cmdline.txt so that the RPi firmware boots the newly
-# written slot on the next reboot.  The boot partition is remounted
-# read-write for the edit, then restored to read-only.
+# written slot on the next reboot, writes boot_state for the watchdog,
+# and backs up cmdline.txt for rollback recovery.
 
 set -euo pipefail
 
@@ -12,22 +12,32 @@ TARGET_DEV=$(cat  /run/swupdate-target-dev)
 
 echo "[swupdate post-install] activating slot ${TARGET_SLOT} (${TARGET_DEV})"
 
-# ── Resolve the PARTUUID of the target partition ──────────────────────────────
+# Resolve the PARTUUID of the target partition
 TARGET_PARTUUID=$(blkid -s PARTUUID -o value "${TARGET_DEV}")
 if [[ -z "${TARGET_PARTUUID}" ]]; then
     echo "[swupdate post-install] ERROR: cannot read PARTUUID from ${TARGET_DEV}" >&2
     exit 1
 fi
 
-# ── Toggle root= in /boot/cmdline.txt ────────────────────────────────────────
 mount -o remount,rw /boot
+
+# Backup current cmdline.txt for rollback (boot-watchdog / swupdate-bootcheck)
+cp /boot/cmdline.txt /boot/cmdline.txt.prev
+
+# Switch root= to the new slot
 sed -i "s|root=PARTUUID=[a-fA-F0-9-]*|root=PARTUUID=${TARGET_PARTUUID}|" \
     /boot/cmdline.txt
+
+# Write boot_state for the watchdog — 3 tries before automatic rollback
+printf 'slot=%s\ntries_remaining=3\nconfirmed=false\n' "${TARGET_SLOT}" \
+    > /boot/boot_state
+
 mount -o remount,ro /boot
 
 echo "[swupdate post-install] cmdline.txt → root=PARTUUID=${TARGET_PARTUUID}"
+echo "[swupdate post-install] boot_state written (slot=${TARGET_SLOT} tries=3)"
 
-# ── Clean up temporary files and symlink ─────────────────────────────────────
+# Clean up temp files and symlink
 rm -f /dev/swupdate-inactive \
       /run/swupdate-target-slot \
       /run/swupdate-target-dev
