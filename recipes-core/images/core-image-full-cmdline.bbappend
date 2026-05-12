@@ -95,6 +95,9 @@ IMAGE_INSTALL:append = " \
     python3-periphery \
 "
 
+# Acadia HAL
+IMAGE_INSTALL:append = " acadia-hal"
+
 # Add local user 'rpi' with password 'rpi' and sudo access
 inherit extrausers
 
