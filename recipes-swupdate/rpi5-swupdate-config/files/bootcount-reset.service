@@ -1,0 +1,17 @@
+[Unit]
+Description=Reset U-Boot bootcount after successful boot (OTA rollback confirmation)
+Documentation=https://sbabic.github.io/swupdate/
+# Run after the network is up and acadia-client is healthy so we only
+# confirm a boot that has the full system operational.
+After=network-online.target acadia-client.service swupdate-bootcheck.service
+Wants=network-online.target
+ConditionPathExists=/usr/sbin/fw_setenv
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/lib/swupdate/bootcount-reset.sh
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target

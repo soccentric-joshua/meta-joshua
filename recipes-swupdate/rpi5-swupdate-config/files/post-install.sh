@@ -37,6 +37,19 @@ mount -o remount,ro /boot
 echo "[swupdate post-install] cmdline.txt → root=PARTUUID=${TARGET_PARTUUID}"
 echo "[swupdate post-install] boot_state written (slot=${TARGET_SLOT} tries=3)"
 
+# T051: Also set U-Boot environment variables for firmware-level rollback.
+# U-Boot increments bootcount on every boot; if bootcount >= bootlimit and
+# upgrade_available==1, altbootcmd reverts the slot.  The bootcount-reset
+# systemd service clears upgrade_available on a healthy boot.
+if command -v fw_setenv &>/dev/null; then
+    fw_setenv upgrade_available 1
+    fw_setenv bootcount 0
+    fw_setenv bootlimit 3
+    echo "[swupdate post-install] U-Boot env: upgrade_available=1 bootcount=0 bootlimit=3"
+else
+    echo "[swupdate post-install] fw_setenv not available — skipping U-Boot env"
+fi
+
 # Clean up temp files and symlink
 rm -f /dev/swupdate-inactive \
       /run/swupdate-target-slot \

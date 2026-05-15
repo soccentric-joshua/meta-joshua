@@ -18,6 +18,9 @@ SRC_URI = " \
     file://swupdate-start.sh \
     file://swupdate-webui-auth-init.sh \
     file://swupdate-webui-auth-init.service \
+    file://bootcount-reset.sh \
+    file://bootcount-reset.service \
+    file://fw_env.config \
 "
 
 S = "${WORKDIR}"
@@ -28,12 +31,14 @@ SYSTEMD_SERVICE:${PN} = " \
     swupdate-bootcheck.service \
     boot-watchdog.service \
     swupdate-webui-auth-init.service \
+    bootcount-reset.service \
 "
 SYSTEMD_AUTO_ENABLE:${PN} = "enable"
 
 # swupdate and bash are required at runtime; util-linux provides findmnt/blkid;
-# openssl is needed by swupdate-webui-auth-init.sh for password generation.
-RDEPENDS:${PN} = "swupdate bash util-linux openssl"
+# openssl is needed by swupdate-webui-auth-init.sh for password generation;
+# libubootenv provides fw_setenv/fw_printenv for U-Boot env OTA confirmation.
+RDEPENDS:${PN} = "swupdate bash util-linux openssl libubootenv"
 
 do_install() {
     # swupdate main config
@@ -55,6 +60,12 @@ do_install() {
     install -m 0755 ${WORKDIR}/boot-watchdog.sh \
                     ${D}${sbindir}/boot-watchdog.sh
 
+    # T051: U-Boot env bootcount-reset script and config
+    install -m 0755 ${WORKDIR}/bootcount-reset.sh \
+                    ${D}${libdir}/swupdate/bootcount-reset.sh
+    install -m 0644 ${WORKDIR}/fw_env.config \
+                    ${D}${sysconfdir}/fw_env.config
+
     # swupdate startup wrapper (C2 signing + I7 web UI auth)
     install -m 0755 ${WORKDIR}/swupdate-start.sh \
                     ${D}${sbindir}/swupdate-start.sh
@@ -71,6 +82,8 @@ do_install() {
                     ${D}${systemd_system_unitdir}/boot-watchdog.service
     install -m 0644 ${WORKDIR}/swupdate-webui-auth-init.service \
                     ${D}${systemd_system_unitdir}/swupdate-webui-auth-init.service
+    install -m 0644 ${WORKDIR}/bootcount-reset.service \
+                    ${D}${systemd_system_unitdir}/bootcount-reset.service
 
     # Drop-in: replace ExecStart with swupdate-start.sh wrapper
     install -d ${D}${systemd_system_unitdir}/swupdate.service.d
@@ -80,6 +93,7 @@ do_install() {
 
 FILES:${PN} += " \
     ${sysconfdir}/swupdate/ \
+    ${sysconfdir}/fw_env.config \
     ${libdir}/swupdate/ \
     ${sbindir}/boot-watchdog.sh \
     ${sbindir}/swupdate-start.sh \
@@ -87,5 +101,6 @@ FILES:${PN} += " \
     ${systemd_system_unitdir}/swupdate-bootcheck.service \
     ${systemd_system_unitdir}/boot-watchdog.service \
     ${systemd_system_unitdir}/swupdate-webui-auth-init.service \
+    ${systemd_system_unitdir}/bootcount-reset.service \
     ${systemd_system_unitdir}/swupdate.service.d/ \
 "
