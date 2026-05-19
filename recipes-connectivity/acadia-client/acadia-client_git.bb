@@ -21,8 +21,8 @@ inherit cmake systemd useradd
 
 OECMAKE_SOURCEPATH = "${S}"
 
-DEPENDS += "grpc protobuf spdlog"
-RDEPENDS:${PN} = "grpc spdlog"
+DEPENDS += "grpc protobuf spdlog tomlplusplus yaml-cpp sqlite3"
+RDEPENDS:${PN} = "grpc spdlog yaml-cpp libsqlite3"
 
 USERADD_PACKAGES = "${PN}"
 USERADD_PARAM:${PN} = "-r -s /sbin/nologin -d /var/lib/acadia -g acadia acadia"
