@@ -5,14 +5,14 @@ HOMEPAGE = "https://github.com/SiliconCentric/Acadia-Client"
 LICENSE = "CLOSED"
 
 SRC_URI = " \
-    git://git@github.com/SiliconCentric/Acadia-Client.git;protocol=ssh;user=git;branch=main \
+    git://git@github.com/SiliconCentric/Acadia-Client.git;protocol=ssh;user=git;branch=release \
     file://acadia-client.service \
 "
 # TODO: replace with the real commit SHA once the upstream repo exists:
 #   SRCREV = "<40-char-sha>"
 # Using a hardcoded placeholder avoids a parse-time network fetch (AUTOREV
 # forces BitBake to contact the remote during parsing, breaking offline builds).
-SRCREV = "0000000000000000000000000000000000000000"
+SRCREV = "71ee04ec3f9bb06cce989baae6de6f37148fb50d"
 
 PV = "1.0+git${SRCPV}"
 S = "${WORKDIR}/git"
@@ -21,8 +21,8 @@ inherit cmake systemd useradd
 
 OECMAKE_SOURCEPATH = "${S}"
 
-DEPENDS += "grpc protobuf"
-RDEPENDS:${PN} = "grpc"
+DEPENDS += "grpc protobuf spdlog"
+RDEPENDS:${PN} = "grpc spdlog"
 
 USERADD_PACKAGES = "${PN}"
 USERADD_PARAM:${PN} = "-r -s /sbin/nologin -d /var/lib/acadia -g acadia acadia"
