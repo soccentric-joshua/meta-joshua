@@ -5,7 +5,7 @@ HOMEPAGE = "https://github.com/SiliconCentric/Acadia-Client"
 LICENSE = "CLOSED"
 
 SRC_URI = " \
-    git://github.com/SiliconCentric/Acadia-Client.git;protocol=https;branch=main;name=acadia-client \
+    git://git@github.com/SiliconCentric/Acadia-Client.git;protocol=ssh;user=git;branch=main \
     file://acadia-client.service \
 "
 # TODO: replace with the real commit SHA once the upstream repo exists:
