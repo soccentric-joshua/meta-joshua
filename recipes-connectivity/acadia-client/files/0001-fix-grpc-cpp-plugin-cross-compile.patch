@@ -1,0 +1,29 @@
+From: Yocto cross-compile fix
+Subject: [PATCH] Fix gRPC cpp plugin detection for cross-compilation
+
+In a Yocto cross-compilation environment gRPC::grpc_cpp_plugin is not a
+valid CMake imported target in the target sysroot — it is a host-side
+build tool.  Guard the get_target_property() call and fall back to
+find_program() with NO_CMAKE_FIND_ROOT_PATH so that the plugin is
+located in the native sysroot rather than the cross sysroot.
+
+Upstream-Status: Inappropriate [cross-compile workaround]
+Signed-off-by: Yocto Build System <oe@not-upstream>
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,7 +30,13 @@ if(gRPC_FOUND)
+   message(STATUS "[acadia-client] gRPC ${gRPC_VERSION} via CMake config")
+   set(ACADIA_GRPC_LIBRARIES gRPC::grpc++ gRPC::grpc)
+-  get_target_property(GRPC_CPP_PLUGIN gRPC::grpc_cpp_plugin LOCATION)
++  if(TARGET gRPC::grpc_cpp_plugin)
++    get_target_property(GRPC_CPP_PLUGIN gRPC::grpc_cpp_plugin LOCATION)
++  else()
++    # Cross-compilation: grpc_cpp_plugin is a host tool, not a target binary.
++    find_program(GRPC_CPP_PLUGIN grpc_cpp_plugin
++      NO_CMAKE_FIND_ROOT_PATH
++      DOC "gRPC C++ plugin (host tool for cross-compilation)")
++  endif()
+ else()
+   find_package(PkgConfig REQUIRED)
+   pkg_check_modules(GRPCPP REQUIRED grpc++)

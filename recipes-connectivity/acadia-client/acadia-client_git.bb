@@ -7,6 +7,7 @@ LICENSE = "CLOSED"
 SRC_URI = " \
     git://git@github.com/SiliconCentric/Acadia-Client.git;protocol=ssh;user=git;branch=release \
     file://acadia-client.service \
+    file://0001-fix-grpc-cpp-plugin-cross-compile.patch \
 "
 # TODO: replace with the real commit SHA once the upstream repo exists:
 #   SRCREV = "<40-char-sha>"
@@ -21,7 +22,7 @@ inherit cmake systemd useradd
 
 OECMAKE_SOURCEPATH = "${S}"
 
-DEPENDS += "grpc protobuf spdlog tomlplusplus yaml-cpp sqlite3"
+DEPENDS += "grpc grpc-native protobuf spdlog tomlplusplus yaml-cpp sqlite3"
 RDEPENDS:${PN} = "grpc spdlog yaml-cpp libsqlite3"
 
 USERADD_PACKAGES = "${PN}"
