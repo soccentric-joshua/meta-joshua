@@ -18,4 +18,4 @@ EXTRA_OECMAKE = "-DTOMLPLUSPLUS_BUILD_TESTS=OFF -DTOMLPLUSPLUS_BUILD_EXAMPLES=OF
 # toml++ is header-only; no runtime library is produced.
 ALLOW_EMPTY:${PN} = "1"
 FILES:${PN}     = ""
-FILES:${PN}-dev = "${includedir} ${libdir}/cmake ${datadir}/cmake ${libdir}/pkgconfig"
+FILES:${PN}-dev = "${includedir} ${libdir}/cmake ${datadir}/cmake ${libdir}/pkgconfig ${datadir}/${BPN}"
