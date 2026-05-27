@@ -1,4 +1,4 @@
-SUMMARY = "RPi5 connectivity — DHCP on Ethernet, WiFi (wpa_supplicant) and Bluetooth"
+SUMMARY = "Joshua connectivity — DHCP on Ethernet, WiFi (wpa_supplicant) and Bluetooth"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -10,7 +10,7 @@ SRC_URI = " \
     file://11-eth-vlan10.network \
     file://21-wlan-vlan10.network \
     file://wpa_supplicant-wlan0.conf \
-    file://80-rpi5-connectivity.preset \
+    file://80-joshua-connectivity.preset \
 "
 
 # wpa-supplicant and bluez5 must be present for the preset to enable them
@@ -39,8 +39,8 @@ do_install() {
 
     # ── systemd preset — enable networkd, resolved, wpa_supplicant, BT ───────
     install -d ${D}${systemd_unitdir}/system-preset
-    install -m 0644 ${WORKDIR}/80-rpi5-connectivity.preset \
-                    ${D}${systemd_unitdir}/system-preset/80-rpi5-connectivity.preset
+    install -m 0644 ${WORKDIR}/80-joshua-connectivity.preset \
+                    ${D}${systemd_unitdir}/system-preset/80-joshua-connectivity.preset
 
     # ── Point /etc/resolv.conf at systemd-resolved stub ───────────────────────
     install -d ${D}${sysconfdir}

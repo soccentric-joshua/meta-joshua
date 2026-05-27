@@ -1,4 +1,4 @@
-SUMMARY     = "SWUpdate runtime configuration and A/B OTA helper scripts for RPi5"
+SUMMARY     = "SWUpdate runtime configuration and A/B OTA helper scripts for Joshua"
 DESCRIPTION = "Installs swupdate.cfg, slot-detection / boot-slot scripts, a \
                systemd drop-in that enables the Mongoose web UI on port 8080, \
                and a one-shot boot-check service that logs the active slot."

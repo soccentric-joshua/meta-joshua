@@ -2,18 +2,16 @@
 IMAGE_INSTALL:append = " \
     swupdate \
     swupdate-www \
-    rpi5-swupdate-config \
+    joshua-swupdate-config \
 "
 
-# Persistent /home partition init — creates /home/rpi on first boot after
+# Persistent /home partition init — creates /home/joshua on first boot after
 # the empty ext4 home partition (p4) is mounted over /home.
-IMAGE_INSTALL:append = " rpi5-home-init"
+IMAGE_INSTALL:append = " joshua-home-init"
 
 # Connectivity — Ethernet DHCP, WiFi (wpa_supplicant), Bluetooth
-# linux-firmware-rpidistro is pulled in by meta-raspberrypi MACHINE_EXTRA_RRECOMMENDS
-# but we declare the tools explicitly for clarity.
 IMAGE_INSTALL:append = " \
-    rpi5-connectivity \
+    joshua-connectivity \
     wpa-supplicant \
     iw \
     rfkill \
@@ -96,10 +94,10 @@ IMAGE_INSTALL:append = " \
     python3-periphery \
 "
 
-# Add local user 'rpi' with password 'rpi' and sudo access
+# Add local user 'joshua' with password 'joshua' and sudo access
 inherit extrausers
 
 EXTRA_USERS_PARAMS = "\
-    useradd -m -s /bin/bash -G sudo rpi; \
-    usermod -p '\$6\$8.kfghMSYkTHsFqs\$fKQIEp.xMjitUYt9yXjEZBUvKqUOQvxekn5.9hWP9ewiLFSI0LQi5OpaDNfSqh4OU.tzN7co7olMAYg53/kCP0' rpi; \
+    useradd -m -s /bin/bash -G sudo joshua; \
+    usermod -p '\$6\$8.kfghMSYkTHsFqs\$fKQIEp.xMjitUYt9yXjEZBUvKqUOQvxekn5.9hWP9ewiLFSI0LQi5OpaDNfSqh4OU.tzN7co7olMAYg53/kCP0' joshua; \
 "

@@ -1,8 +1,8 @@
 #!/bin/bash
 # SWUpdate post-install script ─ included in every .swu package
 #
-# Updates /boot/cmdline.txt so that the RPi firmware boots the newly
-# written slot on the next reboot.  The boot partition is remounted
+# Updates the bootloader configuration so the newly written slot is
+# selected on the next reboot.  The boot partition is remounted
 # read-write for the edit, then restored to read-only.
 
 set -euo pipefail

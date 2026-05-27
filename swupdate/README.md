@@ -1,4 +1,4 @@
-# SWUpdate OTA for Raspberry Pi 5
+# SWUpdate OTA for Joshua
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                  Raspberry Pi 5  256 GB SD card                      │
+│                  Joshua  —  eMMC/SD card                            │
 │                                                                      │
 │  ┌──────────┐  ┌────────────────┐  ┌────────────────┐  ┌──────────┐ │
 │  │  p1/boot │  │  p2/rootfs-a   │  │  p3/rootfs-b   │  │  p4/data │ │
@@ -70,14 +70,14 @@ files, application state, certificates, logs.
 ## Update Flow — Step by Step
 
 ```
-Developer workstation                       Raspberry Pi 5
+Developer workstation                       Joshua
 ─────────────────────────────────────────────────────────────────────
 make swu SWU_VERSION=1.2.3
   → gzip rootfs.ext4 to rootfs.ext4.gz
   → substitute @@VERSION@@ in sw-description
-  → cpio-pack → rpi5-1.2.3.swu
+  → cpio-pack → joshua-1.2.3.swu
 
-Upload rpi5-1.2.3.swu  ──────────────────►  SWUpdate daemon receives .swu
+Upload joshua-1.2.3.swu  ──────────────────►  SWUpdate daemon receives .swu
 (web UI :8080 or swupdate-client)
                                              1. Verify sw-description signature
                                                 (if signing enabled)
@@ -111,15 +111,15 @@ Upload rpi5-1.2.3.swu  ──────────────────►
 ## File Map
 
 ```
-meta/meta-custom/
+meta/meta-joshua/
 ├── swupdate/                          ← .swu packaging sources (host-side)
 │   ├── sw-description                 Template; @@VERSION@@ substituted by make swu
 │   ├── pre-install.sh                 Copied verbatim into every .swu
 │   └── post-install.sh                Copied verbatim into every .swu
 │
 └── recipes-swupdate/
-    └── rpi5-swupdate-config/
-        ├── rpi5-swupdate-config.bb    BitBake recipe
+    └── joshua-swupdate-config/
+        ├── joshua-swupdate-config.bb    BitBake recipe
         └── files/
             ├── swupdate.cfg           libconfig runtime config (installed to /etc/swupdate/)
             ├── pre-install.sh         Installed to /usr/lib/swupdate/ on target
@@ -136,7 +136,7 @@ meta/meta-custom/
 
 ### Prerequisites (host)
 
-- A successful `make build` that produced `core-image-full-cmdline-raspberrypi5*.rootfs.ext4`
+- A successful `make build` that produced `joshua-image-am62axx-evm*.rootfs.ext4`
 - `gzip` and `cpio` available on the host (standard on any Linux workstation)
 
 ### Commands
@@ -149,16 +149,16 @@ make swu
 make swu SWU_VERSION=1.2.3
 
 # Override build dir
-make swu BUILD_DIR=/opt/rpi5-build SWU_VERSION=2.0.0
+make swu BUILD_DIR=/opt/joshua-build SWU_VERSION=2.0.0
 ```
 
-The output is written to `build/rpi5-<version>.swu`.
+The output is written to `build/joshua-<version>.swu`.
 
 ### What `make swu` does internally
 
-1. Finds the latest `*.rootfs.ext4` in `build/tmp/deploy/images/raspberrypi5/`.
+1. Finds the latest `*.rootfs.ext4` in `build/tmp/deploy/images/am62axx-evm/`.
 2. gzip-compresses it to `build/swu/rootfs.ext4.gz`.
-3. Substitutes `@@VERSION@@` in `meta/meta-custom/swupdate/sw-description` → `build/swu/sw-description`.
+3. Substitutes `@@VERSION@@` in `meta/meta-joshua/swupdate/sw-description` → `build/swu/sw-description`.
 4. Copies `pre-install.sh` and `post-install.sh` into `build/swu/`.
 5. Packs the four files in the required cpio order:
    ```
@@ -167,7 +167,7 @@ The output is written to `build/rpi5-<version>.swu`.
    post-install.sh
    rootfs.ext4.gz
    ```
-6. Writes `build/rpi5-<version>.swu`.
+6. Writes `build/joshua-<version>.swu`.
 
 ---
 
@@ -175,10 +175,10 @@ The output is written to `build/rpi5-<version>.swu`.
 
 ### Web UI
 
-1. Find the device IP: `ping raspberrypi5.local` or check your router DHCP leases.
+1. Find the device IP: `ping joshua.local` or check your router DHCP leases.
 2. Open `http://<device-ip>:8080` in a browser.
 3. The SWUpdate React front-end (`swupdate-www`) loads.
-4. Drag-and-drop `build/rpi5-<version>.swu` onto the upload area, or click
+4. Drag-and-drop `build/joshua-<version>.swu` onto the upload area, or click
    **Select file** and choose it.
 5. Click **Start update**.
 6. Progress is shown in real time via a WebSocket. When it reaches 100% the
@@ -191,13 +191,13 @@ distro package manager or built from source.
 
 ```bash
 # Basic push
-swupdate-client <device-ip> build/rpi5-1.2.3.swu
+swupdate-client <device-ip> build/joshua-1.2.3.swu
 
 # Verbose progress
-swupdate-client -v <device-ip> build/rpi5-1.2.3.swu
+swupdate-client -v <device-ip> build/joshua-1.2.3.swu
 
 # Custom port (if you changed the Mongoose port)
-swupdate-client -p 8080 -v <device-ip> build/rpi5-1.2.3.swu
+swupdate-client -p 8080 -v <device-ip> build/joshua-1.2.3.swu
 ```
 
 Exit code `0` = success, non-zero = failure (check stderr / device logs).
@@ -208,7 +208,7 @@ If `swupdate-client` is not available you can push with `curl`:
 
 ```bash
 curl -X POST http://<device-ip>:8080/upload \
-     -F "file=@build/rpi5-1.2.3.swu"
+     -F "file=@build/joshua-1.2.3.swu"
 ```
 
 ---
@@ -256,10 +256,10 @@ swupdate --version
 swupdate-progress
 
 # Apply a local .swu file (e.g. copied via scp)
-swupdate -v -i /tmp/rpi5-1.2.3.swu
+swupdate -v -i /tmp/joshua-1.2.3.swu
 
 # Dry-run (parses + validates sw-description but does not flash)
-swupdate -v --dry-run -i /tmp/rpi5-1.2.3.swu
+swupdate -v --dry-run -i /tmp/joshua-1.2.3.swu
 
 # Query active slot (written by swupdate-bootcheck.service at boot)
 cat /run/swupdate-active-slot
@@ -269,10 +269,10 @@ cat /run/swupdate-active-slot
 
 ```bash
 # Send and monitor interactively
-swupdate-client -v <ip> build/rpi5-1.2.3.swu
+swupdate-client -v <ip> build/joshua-1.2.3.swu
 
 # Non-interactive (scriptable) — exit code reflects success/failure
-swupdate-client <ip> build/rpi5-1.2.3.swu && echo OK || echo FAILED
+swupdate-client <ip> build/joshua-1.2.3.swu && echo OK || echo FAILED
 
 # Check installed version via REST API
 curl -s http://<ip>:8080/api/v1/versioning | python3 -m json.tool
@@ -341,7 +341,7 @@ counter / watchdog integration). Manual rollback procedure:
 To add automatic rollback, a typical approach is:
 
 1. Store a `boot_tries` counter in a dedicated small FAT partition or in a U-Boot
-   environment (requires U-Boot, not the default RPi firmware bootloader).
+   environment (requires U-Boot or equivalent bootloader).
 2. In the initramfs (or early `ExecStartPre` in a high-priority systemd unit),
    decrement the counter; if it reaches zero, run `post-install.sh` pointing back
    at the previous slot's PARTUUID.

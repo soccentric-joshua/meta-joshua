@@ -4,7 +4,7 @@ software =
         hardware- compatibility =["1.0"];
 
 /*
- * Raspberry Pi 5 — A/B rootfs OTA update
+ * Joshua — A/B rootfs OTA update
  *
  * Workflow:
  *   1. pre-install.sh  identifies the inactive slot (p2 or p3) and
@@ -16,7 +16,7 @@ software =
  *
  * To deliver the update:
  *   • Web UI  : http://<device-ip>:8080  (drag-and-drop .swu)
- *   • CLI push: swupdate-client -v <device-ip> rpi5-<version>.swu
+ *   • CLI push: swupdate-client -v <device-ip> joshua-<version>.swu
  */
 
 images: (
