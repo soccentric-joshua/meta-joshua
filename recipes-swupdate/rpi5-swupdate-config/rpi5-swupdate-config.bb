@@ -66,6 +66,11 @@ do_install() {
     install -m 0644 ${WORKDIR}/fw_env.config \
                     ${D}${sysconfdir}/fw_env.config
 
+    if [ "${SWUPDATE_SECURE_MODE}" = "1" ]; then
+        install -d ${D}${sysconfdir}/swupdate
+        printf '%s\n' 'secure' > ${D}${sysconfdir}/swupdate/secure-mode
+    fi
+
     # swupdate startup wrapper (C2 signing + I7 web UI auth)
     install -m 0755 ${WORKDIR}/swupdate-start.sh \
                     ${D}${sbindir}/swupdate-start.sh

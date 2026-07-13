@@ -1,0 +1,65 @@
+header:
+  version: 14
+
+distro: poky
+machine: am62axx-evm
+target: joshua-image
+
+repos:
+  poky:
+    url: https://git.yoctoproject.org/poky
+    commit: 6b7474f7ca29076d28df81a49feec6311fa18202
+    path: layers/poky
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+  meta-openembedded:
+    url: https://github.com/openembedded/meta-openembedded.git
+    commit: 29a044218285fdc7fcdd63d5f0929cb3a27b6fed
+    path: layers/meta-openembedded
+    layers:
+      meta-oe:
+      meta-networking:
+      meta-python:
+      meta-multimedia:
+  meta-swupdate:
+    url: https://github.com/sbabic/meta-swupdate.git
+    commit: 438e8ea2d98aa5fd5f571f84db154dbe9062b37a
+    path: layers/meta-swupdate
+    layers:
+      .:
+  meta-ti:
+    url: https://github.com/TexasInstruments/meta-ti.git
+    commit: 7ff810824442c56ef59fa2d705d64a03ade5f5f7
+    path: layers/meta-ti
+    layers:
+      meta-ti-bsp:
+      meta-ti-extras:
+  meta-arm:
+    url: https://git.yoctoproject.org/meta-arm
+    commit: 23b572c40ea6709ab3f8bd7abbb5a795fc3631c2
+    path: layers/meta-arm
+    layers:
+      meta-arm:
+      meta-arm-toolchain:
+  meta-joshua:
+    layers:
+      .:
+
+local_conf_header:
+  joshua: |
+    INIT_MANAGER = "systemd"
+    IMAGE_FSTYPES = "wic.bz2 wic.bmap ext4"
+    DL_DIR = "/downloads"
+    SSTATE_DIR = "/sstate"
+    PACKAGECONFIG:append:pn-swupdate = " webserver"
+    SWUPDATE_INIT = "systemd"
+    SWUPDATE_SECURE_MODE ?= "0"
+    BBMASK += ".*recipes-bsp/acadia-hal.*|.*recipes-connectivity/acadia-client.*"
+    BBMASK += ".*recipes-kernel/linux/linux-raspberrypi_6.6.bbappend"
+    SERIAL_CONSOLES = "115200;ttyS2"
+    DISTRO_FEATURES:append = " ptest"
+    EXTRA_IMAGE_FEATURES:append = " tools-debug tools-sdk ptest-pkgs"
+    SDKIMAGE_FEATURES:append = " staticdev-pkgs dbg-pkgs src-pkgs ptest-pkgs"
+    TOOLCHAIN_TARGET_TASK:append = " gdbserver perf trace-cmd valgrind ptest-runner"

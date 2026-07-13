@@ -1,9 +1,9 @@
 SUMMARY = "Acadia Hardware Abstraction Layer"
 DESCRIPTION = "HAL library for the Acadia platform, providing hardware abstraction interfaces."
-HOMEPAGE = "https://github.com/SiliconCentric/Acaida-HAL"
+HOMEPAGE = "https://github.com/SiliconCentric/Acadia-HAL"
 LICENSE = "CLOSED"
 
-SRC_URI = "git://github.com/SiliconCentric/Acaida-HAL.git;protocol=ssh;user=git;branch=master"
+SRC_URI = "git://github.com/SiliconCentric/Acadia-HAL.git;protocol=https;branch=master"
 SRCREV = "${AUTOREV}"
 
 PV = "1.0+git${SRCPV}"

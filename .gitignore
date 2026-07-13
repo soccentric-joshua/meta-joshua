@@ -1,0 +1,12 @@
+# Locally checked out external layers
+/layers/
+
+# Yocto build output, generated configuration, and shared caches
+/build/
+
+# Deployed images, SDKs, and OTA bundles
+/deploy/
+
+# Local editor and host tooling state
+.vscode/
+*.swp

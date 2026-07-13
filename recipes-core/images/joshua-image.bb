@@ -10,38 +10,27 @@ inherit core-image
 IMAGE_FEATURES += "ssh-server-openssh"
 
 # OTA / swupdate
-IMAGE_INSTALL:append = " swupdate swupdate-www rpi5-swupdate-config"
+IMAGE_INSTALL:append = " swupdate swupdate-client swupdate-www"
+IMAGE_INSTALL:append:raspberrypi5 = " rpi5-swupdate-config"
 
 # Home partition init
-IMAGE_INSTALL:append = " rpi5-home-init"
+IMAGE_INSTALL:append:raspberrypi5 = " rpi5-home-init"
 
 # Connectivity
-IMAGE_INSTALL:append = " \
+IMAGE_INSTALL:append:raspberrypi5 = " \
     rpi5-connectivity wpa-supplicant iw rfkill bluez5 bluez5-dev \
 "
 
 # gRPC + Protobuf (NO compiler on device — M5)
-IMAGE_INSTALL:append = " \
-    protobuf protobuf-lite grpc \
-    python3-grpcio python3-protobuf sudo \
-"
+IMAGE_INSTALL:append = " packagegroup-joshua-middleware packagegroup-joshua-debug sudo"
 
 # Hardware interface tools
-IMAGE_INSTALL:append = " \
-    i2c-tools python3-smbus python3-smbus2 \
-    spitools python3-spidev \
-    libgpiod libgpiod-tools python3-gpiod \
-    picocom minicom python3-pyserial \
-    usbutils pciutils nvme-cli sg3-utils hdparm mtd-utils \
-    can-utils \
-    lshw ethtool devmem2 cpupower watchdog sysstat iotop strace \
-    v4l-utils evtest python3-periphery vim \
-"
+IMAGE_INSTALL:append = " packagegroup-joshua-hardware vim"
 
-# Acadia stack
-# NOTE: acadia-client is excluded until the upstream repo exists and SRCREV is
-# pinned. Add it back once available: acadia-client acadia-data-init
-IMAGE_INSTALL:append = " acadia-hal acadia-services"
+# Product services remain available independently of the unavailable upstream
+# Acadia repositories. Enable those recipes after supplying their sources and
+# removing the BBMASK in the selected KAS configuration.
+IMAGE_INSTALL:append = " acadia-services"
 
 # Operator account — locked, SSH-key access only
 inherit extrausers

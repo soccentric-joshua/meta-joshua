@@ -6,6 +6,10 @@
 SRC_URI:remove = "git://github.com/raspberrypi/linux.git;name=machine;branch=${KBRANCH};protocol=https"
 SRC_URI:append = " git://github.com/raspberrypi/linux.git;name=machine;nobranch=1;protocol=https"
 
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+SRC_URI:append = " file://joshua-hardware.cfg"
+KERNEL_CONFIG_FRAGMENTS:append = " ${WORKDIR}/joshua-hardware.cfg"
+
 # Pin to the current HEAD of rpi-6.6.y (update when meta-raspberrypi is bumped)
 SRCREV_machine:raspberrypi5 = "bba53a117a4a5c29da892962332ff1605990e17a"
 SRCREV_machine               = "bba53a117a4a5c29da892962332ff1605990e17a"

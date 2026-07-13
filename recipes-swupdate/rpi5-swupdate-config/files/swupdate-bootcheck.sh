@@ -1,8 +1,8 @@
 #!/bin/bash
 # swupdate-bootcheck.sh — I4/C1: health check that confirms OTA or triggers rollback.
 #
-# Runs after network and acadia-client.service are up.
-# If acadia-client is healthy → write confirmed=true to /boot/boot_state.
+# Runs after the normal boot target is up.
+# If the system reaches multi-user.target → write confirmed=true to /boot/boot_state.
 # If not healthy              → restore previous slot from .prev backups and reboot.
 
 set -euo pipefail
@@ -23,7 +23,7 @@ fi
 
 # ── Health check ─────────────────────────────────────────────────────────────
 HEALTH_OK=true
-if ! systemctl is-active --quiet acadia-client.service; then
+if ! systemctl is-system-running --wait 2>/dev/null | grep -Eq 'running|degraded'; then
     HEALTH_OK=false
 fi
 
