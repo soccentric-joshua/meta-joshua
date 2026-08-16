@@ -4,7 +4,6 @@ Name=wlan*
 [Network]
 DHCP=yes
 IPv6AcceptRA=yes
-VLAN=wlan-vlan10
 
 [DHCPv4]
 RouteMetric=600

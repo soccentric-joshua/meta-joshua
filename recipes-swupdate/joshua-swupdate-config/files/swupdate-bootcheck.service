@@ -1,13 +1,13 @@
 [Unit]
-Description=SWUpdate boot verification (active slot confirmation)
-Documentation=https://sbabic.github.io/swupdate/
+Description=SWUpdate boot health check — confirm OTA slot or trigger rollback
 After=local-fs.target
-DefaultDependencies=no
+Before=network.target network-online.target
 
 [Service]
 Type=oneshot
-ExecStart=/usr/lib/swupdate/swupdate-bootcheck.sh
 RemainAfterExit=yes
+ExecStart=/usr/lib/swupdate/swupdate-bootcheck.sh
+TimeoutStartSec=120
 
 [Install]
-WantedBy=sysinit.target
+WantedBy=multi-user.target
