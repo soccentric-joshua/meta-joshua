@@ -45,8 +45,8 @@ IMAGE_INSTALL:append = " \
     v4l-utils evtest python3-periphery vim \
 "
 
-# Joshua stack
-IMAGE_INSTALL:append = " joshua-hal joshua-services"
+# Joshua stack — HAL, validation client, configuration daemon, services
+IMAGE_INSTALL:append = " joshua-hal joshua-client joshua-configuration joshua-services"
 
 # Target debugging and profiling
 IMAGE_FEATURES += "tools-debug"
