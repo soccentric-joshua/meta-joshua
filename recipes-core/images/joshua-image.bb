@@ -45,8 +45,12 @@ IMAGE_INSTALL:append = " \
     v4l-utils evtest python3-periphery vim \
 "
 
-# Joshua stack — HAL, validation client, configuration daemon, services
-IMAGE_INSTALL:append = " joshua-hal joshua-client joshua-configuration joshua-services"
+# Joshua stack — HAL, validation client, services. WebConfig (the
+# configuration daemon) ships via the meta-webconfig layer instead
+# (kas/repos/meta-webconfig.yaml + the IMAGE_INSTALL in kas/common.yaml) —
+# see the removed recipes-app/joshua-configuration/, which duplicated it
+# under the package name "joshua-configuration".
+IMAGE_INSTALL:append = " joshua-hal joshua-client joshua-services"
 
 # Target debugging and profiling
 IMAGE_FEATURES += "tools-debug"
