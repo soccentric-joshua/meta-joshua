@@ -52,6 +52,12 @@ IMAGE_INSTALL:append = " \
 # under the package name "joshua-configuration".
 IMAGE_INSTALL:append = " joshua-hal joshua-client joshua-services"
 
+# Instrumentation (Joshua-Instrumentation's yocto layer,
+# kas/repos/joshua-instrumentation.yaml). am62axx-evm has no descriptor set
+# of its own; INSTR_BOARD maps it to the existing "sitara-am62" set (same
+# Sitara AM62 SoC family) rather than leaving it unmapped.
+IMAGE_INSTALL:append = " instrumentation"
+
 # Target debugging and profiling
 IMAGE_FEATURES += "tools-debug"
 IMAGE_INSTALL:append = " gdbserver perf trace-cmd valgrind"
