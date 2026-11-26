@@ -3,7 +3,7 @@ header:
 
 repos:
   meta-joshua:
-    url: git@github.com:SiliconCentric/meta-joshua.git
+    url: https://github.com/soccentric-joshua/meta-joshua.git
     branch: scarthgap
     # TODO: pin to a specific commit — run scripts/pin-layers.sh
     path: meta/meta-joshua
