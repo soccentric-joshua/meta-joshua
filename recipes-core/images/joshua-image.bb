@@ -13,7 +13,7 @@ IMAGE_FEATURES += "ssh-server-openssh"
 # OTA / swupdate
 # joshua-swupdate-config implements the inactive-slot, boot-selection, and
 # rollback flow for sdimage-am62x.wks.
-IMAGE_INSTALL:append:am62axx-evm = " swupdate swupdate-www joshua-swupdate-config"
+IMAGE_INSTALL:append:am62axx-evm = " swupdate joshua-swupdate-config"
 
 # Home partition init (persistent /home on the data partition)
 IMAGE_INSTALL:append = " joshua-data-init"
