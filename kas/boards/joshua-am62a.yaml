@@ -1,0 +1,12 @@
+header:
+  version: 14
+  includes:
+    - ../common.yaml
+
+# SK-AM62A-LP (AM62A starter kit)
+machine: am62axx-evm
+
+local_conf_header:
+  am62a: |
+    # Exclude Raspberry Pi-specific bbappends that have no base recipe here
+    BBMASK += "meta-joshua/recipes-kernel/linux/linux-raspberrypi"

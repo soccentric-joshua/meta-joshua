@@ -1,0 +1,78 @@
+# =============================================================================
+# Joshua Yocto Build System — .gitignore
+# =============================================================================
+
+# Yocto build outputs
+build/
+downloads/
+sstate-cache/
+deploy/
+
+# BitBake cache and lock files
+bitbake.lock
+.lock-bitbake-sootooth
+
+# kas-container helper script (auto-downloaded at build time)
+kas-container
+
+# Fetched layers (populated by kas at build time)
+layers/
+
+# SDK / eSDK staging files
+docker/sdk/sdk.sh
+docker/esdk/esdk.sh
+
+# OTA / SWU artefacts
+*.swu
+*.swu.sig
+
+# SWUpdate signing keys — NEVER commit private keys
+meta/*/swupdate/keys/swupdate-private.pem
+meta/*/swupdate/keys/*.key
+meta/*/swupdate/keys/*.pem
+**/swupdate/keys/swupdate-private.pem
+**/*.pem
+**/*.key
+!meta/*/swupdate/keys/.gitignore
+!meta/*/swupdate/keys/*.pub.pem
+
+# Generated / local BitBake config
+build/conf/local.conf
+build/conf/bblayers.conf
+
+# Docker build context leftovers
+docker/**/*.tar
+docker/**/*.tar.gz
+
+# IDE / editor artefacts
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Python byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# Shell / bash completion test output
+*.bash_history
+
+# Logs and temporary files
+*.log
+tmp/
+.tmp/
+
+# Environment files (may contain secrets)
+.env
+.env.*
+!.env.example
+
+# Local meta layer(s): commit meta/meta-joshua in-tree, ignore others.
+meta/*
+!meta/meta-joshua/
+!meta/meta-joshua/**

@@ -1,0 +1,13 @@
+header:
+  version: 14
+
+repos:
+  meta-arm:
+    url: https://git.yoctoproject.org/meta-arm
+    branch: scarthgap
+    # TODO: pin to a specific commit — run scripts/pin-layers.sh
+    #commit: HEAD
+    path: layers/meta-arm
+    layers:
+      meta-arm:
+      meta-arm-toolchain:

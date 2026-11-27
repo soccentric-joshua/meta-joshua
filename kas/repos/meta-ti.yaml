@@ -1,0 +1,13 @@
+header:
+  version: 14
+
+repos:
+  meta-ti:
+    url: https://github.com/TexasInstruments/meta-ti
+    branch: scarthgap
+    # TODO: pin to a specific commit — run scripts/pin-layers.sh
+    #commit: HEAD
+    path: layers/meta-ti
+    layers:
+      meta-ti-bsp:
+      meta-ti-extras:
